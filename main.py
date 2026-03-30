@@ -5,45 +5,25 @@ import os
 
 st.set_page_config(page_title="OWTICS S21 MID", page_icon="🔥", layout="wide")
 
-# 폰트 로드 및 전체 다크 테마 CSS (Teko 폰트 추가)
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Teko:wght@500;700&display=swap');
-    
     .stApp { background-color: #1b1c23; color: #f0edee; font-family: 'Malgun Gothic', sans-serif;}
-    
-    .ow-header {
-        font-family: 'Teko', sans-serif;
-        font-size: 3.5rem;
-        font-weight: 700;
-        font-style: italic;
-        color: #f99e1a;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-    }
-    
-    /* 포지션별 1티어 강조 카드 */
-    .tier-card {
-        padding: 20px;
-        border-radius: 8px;
-        background-color: #2b2d37;
-        border-left: 6px solid;
-    }
+    .ow-header { font-family: 'Teko', sans-serif; font-size: 3.5rem; font-weight: 700; font-style: italic; color: #f99e1a; text-transform: uppercase; letter-spacing: 1px; }
+    .tier-card { padding: 20px; border-radius: 8px; background-color: #2b2d37; border-left: 6px solid; }
     .tank-card { border-left-color: #4EA8DE; }
     .dmg-card { border-left-color: #F4556C; }
     .sup-card { border-left-color: #38E09E; }
-    
     .tier-title { font-family: 'Teko', sans-serif; font-size: 1.8rem; font-style: italic; color: white; margin: 0; line-height: 1.2;}
     .tier-stat { font-size: 1.1rem; font-weight: bold; color: #f99e1a; margin-top: 5px;}
 </style>
 """, unsafe_allow_html=True)
 
-# 🌅 메인 배너 이미지 소환 (image_0.png)
-st.image("https://raw.githubusercontent.com/username/OWTICS_Dashboard/main/assets/main_banner.png", caption="OWTICS.GG SEASON 21 MID DASHBOARD", use_container_width=True)
+# 🌅 진짜로 작동하는 고화질 메인 배너 이미지 (오버워치 느낌의 게이밍 데스크)
+st.image("https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=2070&auto=format&fit=crop", use_container_width=True)
 
 st.markdown('<div class="ow-header">S21 MID META DASHBOARD</div>', unsafe_allow_html=True)
 
-# 데이터 로드 (50명 전체 데이터 - 동일)
 data = {
     '영웅': ['시그마', '도미나', '윈스턴', '오리사', '디바', '자리야', '라인하르트', '둠피스트', '라마트라', '로드호그', '레킹볼', '마우가', '정커퀸', '해저드', '캐서디', '엠레', 'Soldier: 76', '소전', '겐지', '애쉬', '안란', '리퍼', '바스티온', '트레이서', '한조', '정크랫', '메이', '파라', '에코', '프레야', '위도우메이커', '벤데타', '시메트라', '벤처', '솜브라', '토르비욘', '아나', '바티스트', '브리기테', '일리아리', '제트팩 캣', '주노', '키리코', '라이프위버', '루시우', '메르시', '미즈키', '모이라', '우양', '젠야타'],
     '포지션': ['탱커']*14 + ['딜러']*22 + ['힐러']*14,
@@ -61,70 +41,34 @@ tank_top = df[df['포지션']=='탱커'].sort_values('픽률(%)', ascending=Fals
 dmg_top = df[df['포지션']=='딜러'].sort_values('픽률(%)', ascending=False).iloc[0]
 sup_top = df[df['포지션']=='힐러'].sort_values('픽률(%)', ascending=False).iloc[0]
 
-# --- 👑 1티어 영웅 카드 소환 ---
 with c1:
-    st.markdown(f"""
-    <div class="tier-card tank-card">
-        <p class="tier-title">🛡️ TANK: {tank_top['영웅']}</p>
-        <p class="tier-stat">픽률 {tank_top['픽률(%)']}% | 승률 {tank_top['승률(%)']}%</p>
-    </div>
-    """, unsafe_allow_html=True)
+    st.markdown(f"""<div class="tier-card tank-card"><p class="tier-title">🛡️ TANK: {tank_top['영웅']}</p><p class="tier-stat">픽률 {tank_top['픽률(%)']}% | 승률 {tank_top['승률(%)']}%</p></div>""", unsafe_allow_html=True)
 with c2:
-    st.markdown(f"""
-    <div class="tier-card dmg-card">
-        <p class="tier-title">⚔️ DAMAGE: {dmg_top['영웅']}</p>
-        <p class="tier-stat">픽률 {dmg_top['픽률(%)']}% | 승률 {dmg_top['승률(%)']}%</p>
-    </div>
-    """, unsafe_allow_html=True)
+    st.markdown(f"""<div class="tier-card dmg-card"><p class="tier-title">⚔️ DAMAGE: {dmg_top['영웅']}</p><p class="tier-stat">픽률 {dmg_top['픽률(%)']}% | 승률 {dmg_top['승률(%)']}%</p></div>""", unsafe_allow_html=True)
 with c3:
-    st.markdown(f"""
-    <div class="tier-card sup-card">
-        <p class="tier-title">💉 SUPPORT: {sup_top['영웅']}</p>
-        <p class="tier-stat">픽률 {sup_top['픽률(%)']}% | 승률 {sup_top['승률(%)']}%</p>
-    </div>
-    """, unsafe_allow_html=True)
+    st.markdown(f"""<div class="tier-card sup-card"><p class="tier-title">💉 SUPPORT: {sup_top['영웅']}</p><p class="tier-stat">픽률 {sup_top['픽률(%)']}% | 승률 {sup_top['승률(%)']}%</p></div>""", unsafe_allow_html=True)
 
 st.markdown("<br>", unsafe_allow_html=True)
 
-# --- 🔥 리더보드 그래프 (글꼴 적용) ---
 colA, colB = st.columns(2)
 
 with colA:
     st.markdown("### 🔥 OVERALL TOP 5 PICK RATE")
     top_picks = df.sort_values('픽률(%)', ascending=False).head(5)
-    fig_pick = px.bar(top_picks, x='픽률(%)', y='영웅', orientation='h', text='픽률(%)', color='포지션',
-                      color_discrete_map={'탱커':'#4EA8DE', '딜러':'#F4556C', '힐러':'#38E09E'})
-    
-    # 그래프 글꼴 오버워치 테마로 변경
-    fig_pick.update_layout(yaxis={'categoryorder':'total ascending'}, margin=dict(l=0, r=0, t=0, b=0),
-                           paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', 
-                           font=dict(color='white', family="Teko, sans-serif", size=16)) # 글꼴 강제 지정
+    fig_pick = px.bar(top_picks, x='픽률(%)', y='영웅', orientation='h', text='픽률(%)', color='포지션', color_discrete_map={'탱커':'#4EA8DE', '딜러':'#F4556C', '힐러':'#38E09E'})
+    fig_pick.update_layout(yaxis={'categoryorder':'total ascending'}, margin=dict(l=0, r=0, t=0, b=0), paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', font=dict(color='white', family="Teko, sans-serif", size=16))
     fig_pick.update_traces(textposition='outside')
     st.plotly_chart(fig_pick, use_container_width=True)
 
 with colB:
     st.markdown("### 🏆 OVERALL TOP 5 WIN RATE")
     top_wins = df.sort_values('승률(%)', ascending=False).head(5)
-    fig_win = px.bar(top_wins, x='승률(%)', y='영웅', orientation='h', text='승률(%)', color='포지션',
-                     color_discrete_map={'탱커':'#4EA8DE', '딜러':'#F4556C', '힐러':'#38E09E'})
-    
-    # 그래프 글꼴 오버워치 테마로 변경
-    fig_win.update_layout(yaxis={'categoryorder':'total ascending'}, margin=dict(l=0, r=0, t=0, b=0),
-                          paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', 
-                          font=dict(color='white', family="Teko, sans-serif", size=16)) # 글꼴 강제 지정
+    fig_win = px.bar(top_wins, x='승률(%)', y='영웅', orientation='h', text='승률(%)', color='포지션', color_discrete_map={'탱커':'#4EA8DE', '딜러':'#F4556C', '힐러':'#38E09E'})
+    fig_win.update_layout(yaxis={'categoryorder':'total ascending'}, margin=dict(l=0, r=0, t=0, b=0), paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', font=dict(color='white', family="Teko, sans-serif", size=16))
     fig_win.update_traces(textposition='outside')
     st.plotly_chart(fig_win, use_container_width=True)
 
 st.divider()
 
-# --- 📋 전체 데이터 표 (동일) ---
 st.markdown("### 📋 FULL HERO LEADERBOARD")
-st.dataframe(
-    df[['영웅', '포지션', '세부역할', '픽률(%)', '승률(%)']],
-    use_container_width=True,
-    hide_index=True,
-    column_config={
-        "픽률(%)": st.column_config.ProgressColumn("픽률(%)", format="%f%%", min_value=0, max_value=50),
-        "승률(%)": st.column_config.NumberColumn("승률(%)", format="%f%%")
-    }
-)
+st.dataframe(df[['영웅', '포지션', '세부역할', '픽률(%)', '승률(%)']], use_container_width=True, hide_index=True, column_config={"픽률(%)": st.column_config.ProgressColumn("픽률(%)", format="%f%%", min_value=0, max_value=50), "승률(%)": st.column_config.NumberColumn("승률(%)", format="%f%%")})
