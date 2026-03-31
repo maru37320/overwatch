@@ -27,7 +27,7 @@ hero_images = fetch_official_hero_portraits()
 
 st.markdown("""
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Teko:wght@500;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Teko:wght@400;500;700&display=swap');
     .stApp { background-color: #1b1c23; color: #f0edee; }
     .ow-header { font-family: 'Teko', sans-serif; font-size: 4rem; font-weight: 700; font-style: italic; color: #f99e1a; text-shadow: 2px 2px 10px rgba(249,158,26,0.5); text-transform: uppercase; }
     .tier-card { padding: 20px; border-radius: 12px; background: linear-gradient(145deg, #2b2d37, #1e1f26); box-shadow: 0 4px 15px rgba(0,0,0,0.5); border-left: 6px solid; transition: transform 0.2s; text-align: center;}
@@ -36,12 +36,12 @@ st.markdown("""
     .dmg-card { border-left-color: #F4556C; box-shadow: 0 0 15px rgba(244,85,108,0.3); }
     .sup-card { border-left-color: #38E09E; box-shadow: 0 0 15px rgba(56,224,158,0.3); }
     .tier-title { font-family: 'Teko', sans-serif; font-size: 2.2rem; font-style: italic; color: white; margin: 10px 0 0 0; line-height: 1.1;}
-    .tier-stat { font-size: 1.2rem; font-weight: bold; color: #f99e1a; margin-top: 5px;}
+    .tier-stat { font-family: 'Teko', sans-serif; font-size: 1.4rem; font-weight: 500; color: #f99e1a; margin-top: 5px; letter-spacing: 1px;}
     
-    /* 🔥 커스텀 다크모드 테이블 CSS */
-    .dark-table { width: 100%; border-collapse: collapse; font-family: 'Malgun Gothic', sans-serif; color: white; background-color: #1b1c23; text-align: center; margin-top: 10px; }
-    .dark-table th { background-color: #f99e1a; color: #1b1c23; padding: 12px; font-family: 'Teko', sans-serif; font-size: 1.5rem; letter-spacing: 1px; }
-    .dark-table td { padding: 8px; border-bottom: 1px solid #333; vertical-align: middle; }
+    /* 🔥 폰트 통일된 커스텀 다크모드 테이블 CSS */
+    .dark-table { width: 100%; border-collapse: collapse; font-family: 'Teko', sans-serif; font-size: 1.4rem; letter-spacing: 1px; color: white; background-color: #1b1c23; text-align: center; margin-top: 10px; }
+    .dark-table th { background-color: #f99e1a; color: #1b1c23; padding: 12px; font-weight: 700; font-size: 1.6rem; letter-spacing: 1px; }
+    .dark-table td { padding: 8px; border-bottom: 1px solid #333; vertical-align: middle; font-weight: 400; }
     .dark-table tr:hover { background-color: #2b2d37; }
     .hero-img { width: 45px; height: 45px; border-radius: 50%; border: 2px solid #555; object-fit: cover; }
 </style>
@@ -77,7 +77,6 @@ with c3:
 
 st.markdown("<br>", unsafe_allow_html=True)
 
-# --- 🔥 하얀 배경 해결: 다크모드 커스텀 HTML 테이블 ---
 st.markdown("### 📋 FULL HERO LEADERBOARD")
 html_table = "<table class='dark-table'><tr><th>FACE</th><th>영웅</th><th>포지션</th><th>세부역할</th><th>픽률(%)</th><th>승률(%)</th></tr>"
 for index, row in df.iterrows():
