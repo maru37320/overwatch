@@ -37,11 +37,31 @@ for i in range(3):
         st.markdown(f"""<div class="hero-card"><img src="{hero['초상화']}"><h3 style="margin:5px 0;">{i+1}. {hero['영웅']}</h3><p style="margin:0; color:#ccc;">픽률 {hero['픽률(%)']}% | 승률 {hero['승률(%)']}%</p></div>""", unsafe_allow_html=True)
 
 st.divider()
+
+# --- 🎯 얼굴 박힌 스캐터 플롯 ---
 st.subheader("🎯 META ANALYSIS (PICK RATE vs WIN RATE)")
-fig_scatter = px.scatter(tank_df, x='픽률(%)', y='승률(%)', text='영웅', size='픽률(%)', color='세부역할', color_discrete_sequence=px.colors.sequential.Blues_r)
-fig_scatter.update_traces(textposition='top center', marker=dict(line=dict(width=2, color='white')))
-fig_scatter.add_hline(y=50, line_dash="dash", line_color="red", annotation_text="승률 50% 기준선")
-fig_scatter.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', font=dict(color='white', family="Teko, sans-serif", size=14), height=400)
+# 기본 스캐터 플롯 생성 (점은 투명하게, 텍스트는 아래로)
+fig_scatter = px.scatter(tank_df, x='픽률(%)', y='승률(%)', text='영웅', hover_data=['세부역할'])
+fig_scatter.update_traces(marker=dict(opacity=0), textposition='bottom center', textfont=dict(color='white'))
+
+# 좌표에 영웅 초상화 이미지 추가
+for _, row in tank_df.iterrows():
+    fig_scatter.add_layout_image(
+        dict(
+            source=row['초상화'], x=row['픽률(%)'], y=row['승률(%)'],
+            xref="x", yref="y",
+            sizex=1.5, sizey=1.5, # 탱커 축 비율에 맞춘 이미지 사이즈
+            xanchor="center", yanchor="middle",
+            sizing="contain", layer="above"
+        )
+    )
+
+fig_scatter.add_hline(y=50, line_dash="dash", line_color="red", annotation_text="승률 50% 기준선", annotation_font_color="white")
+# 얼굴이 안 잘리게 여백 추가
+fig_scatter.update_xaxes(range=[tank_df['픽률(%)'].min() - 2, tank_df['픽률(%)'].max() + 2])
+fig_scatter.update_yaxes(range=[tank_df['승률(%)'].min() - 2, tank_df['승률(%)'].max() + 3])
+fig_scatter.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', font=dict(family="Teko, sans-serif", size=14), height=600)
+
 st.plotly_chart(fig_scatter, use_container_width=True)
 
 st.subheader("📋 TANK LEADERBOARD")
