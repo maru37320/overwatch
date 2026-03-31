@@ -1,48 +1,57 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
+import plotly.graph_objects as go
 import os
+import requests
 
 st.set_page_config(page_title="OWTICS S21 MID", page_icon="🔥", layout="wide")
 
+# --- 🕵️‍♂️ "나 봇 아니야 크롬이야" 이미지 자동 다운로드 함수 ---
+def sneak_download_image(url, save_path):
+    if not os.path.exists("assets"):
+        os.makedirs("assets")
+    if not os.path.exists(save_path):
+        headers = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+            "Referer": "https://www.google.com/"
+        }
+        try:
+            response = requests.get(url, headers=headers, stream=True)
+            if response.status_code == 200:
+                with open(save_path, 'wb') as f:
+                    for chunk in response.iter_content(1024):
+                        f.write(chunk)
+        except Exception as e:
+            pass
+
+# 필수 이미지 자동 다운로드 실행 (오버워치 위키/공식 이미지 URL 예시)
+sneak_download_image("https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Overwatch_circle_logo.svg/500px-Overwatch_circle_logo.svg.png", "assets/main_banner.png")
+sneak_download_image("https://static.wikia.nocookie.net/overwatch_gamepedia/images/1/14/Sigma_portrait.png", "assets/sigma.png")
+sneak_download_image("https://static.wikia.nocookie.net/overwatch_gamepedia/images/a/ab/Cassidy_portrait.png", "assets/cassidy.png")
+sneak_download_image("https://static.wikia.nocookie.net/overwatch_gamepedia/images/2/29/Ana_portrait.png", "assets/ana.png")
+
+# --- CSS 스타일링 ---
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Teko:wght@500;700&display=swap');
-    
-    .stApp { background-color: #1b1c23; color: #f0edee; font-family: 'Malgun Gothic', sans-serif;}
-    
-    .ow-header {
-        font-family: 'Teko', sans-serif;
-        font-size: 3.5rem;
-        font-weight: 700;
-        font-style: italic;
-        color: #f99e1a;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-    }
-    
-    /* 포지션별 1티어 강조 카드 */
-    .tier-card {
-        padding: 20px;
-        border-radius: 8px;
-        background-color: #2b2d37;
-        border-left: 6px solid;
-    }
-    .tank-card { border-left-color: #4EA8DE; }
-    .dmg-card { border-left-color: #F4556C; }
-    .sup-card { border-left-color: #38E09E; }
-    
-    .tier-title { font-family: 'Teko', sans-serif; font-size: 1.8rem; font-style: italic; color: white; margin: 0; line-height: 1.2;}
-    .tier-stat { font-size: 1.1rem; font-weight: bold; color: #f99e1a; margin-top: 5px;}
+    .stApp { background-color: #1b1c23; color: #f0edee; }
+    .ow-header { font-family: 'Teko', sans-serif; font-size: 4rem; font-weight: 700; font-style: italic; color: #f99e1a; text-shadow: 2px 2px 10px rgba(249,158,26,0.5); text-transform: uppercase; }
+    .tier-card { padding: 20px; border-radius: 12px; background: linear-gradient(145deg, #2b2d37, #1e1f26); box-shadow: 0 4px 15px rgba(0,0,0,0.5); border-left: 6px solid; transition: transform 0.2s; }
+    .tier-card:hover { transform: scale(1.02); }
+    .tank-card { border-left-color: #4EA8DE; box-shadow: 0 0 15px rgba(78,168,222,0.3); }
+    .dmg-card { border-left-color: #F4556C; box-shadow: 0 0 15px rgba(244,85,108,0.3); }
+    .sup-card { border-left-color: #38E09E; box-shadow: 0 0 15px rgba(56,224,158,0.3); }
+    .tier-title { font-family: 'Teko', sans-serif; font-size: 2.2rem; font-style: italic; color: white; margin: 0; line-height: 1.1;}
+    .tier-stat { font-size: 1.2rem; font-weight: bold; color: #f99e1a; margin-top: 8px;}
 </style>
 """, unsafe_allow_html=True)
 
-# 🌅 메인 배너 이미지 소환 (전체 영웅 공식 초상화 배너)
-st.image("https://raw.githubusercontent.com/username/OWTICS_Dashboard/main/assets/main_banner_official.png", caption="OWTICS.GG SEASON 21 MID DASHBOARD (OFFICIAL PORTRAITS)", use_container_width=True)
-
+st.image("assets/main_banner.png" if os.path.exists("assets/main_banner.png") else "https://placehold.co/1200x300/2b2d37/f99e1a/png?text=OVERWATCH+META", width=150)
 st.markdown('<div class="ow-header">S21 MID META DASHBOARD</div>', unsafe_allow_html=True)
 
-# 데이터 로드 (50명 전체 데이터 - 동일)
+# 데이터 생성
 data = {
     '영웅': ['시그마', '도미나', '윈스턴', '오리사', '디바', '자리야', '라인하르트', '둠피스트', '라마트라', '로드호그', '레킹볼', '마우가', '정커퀸', '해저드', '캐서디', '엠레', 'Soldier: 76', '소전', '겐지', '애쉬', '안란', '리퍼', '바스티온', '트레이서', '한조', '정크랫', '메이', '파라', '에코', '프레야', '위도우메이커', '벤데타', '시메트라', '벤처', '솜브라', '토르비욘', '아나', '바티스트', '브리기테', '일리아리', '제트팩 캣', '주노', '키리코', '라이프위버', '루시우', '메르시', '미즈키', '모이라', '우양', '젠야타'],
     '포지션': ['탱커']*14 + ['딜러']*22 + ['힐러']*14,
@@ -55,48 +64,34 @@ df.to_csv('owtics_s21_exact_data.csv', index=False)
 
 st.markdown("### 👑 CURRENT 1 TIER HEROES")
 c1, c2, c3 = st.columns(3)
-
 tank_top = df[df['포지션']=='탱커'].sort_values('픽률(%)', ascending=False).iloc[0]
 dmg_top = df[df['포지션']=='딜러'].sort_values('픽률(%)', ascending=False).iloc[0]
 sup_top = df[df['포지션']=='힐러'].sort_values('픽률(%)', ascending=False).iloc[0]
 
-# --- 👑 1티어 공식 얼굴 카드 소환 ---
 with c1:
-    # 예시: 공식 시그마 초상화 이미지 (sigma_official.png)
-    st.image("https://raw.githubusercontent.com/username/OWTICS_Dashboard/main/assets/sigma_official.png", width=80) 
-    st.markdown(f"""<div class="tier-card tank-card"><p class="tier-title">🛡️ TANK: {tank_top['영웅']}</p><p class="tier-stat">픽률 {tank_top['픽률(%)']}% | 승률 {tank_top['승률(%)']}%</p></div>""", unsafe_allow_html=True)
+    img_path = "assets/sigma.png" if os.path.exists("assets/sigma.png") else "https://placehold.co/100/2b2d37/4EA8DE/png?text=TANK"
+    st.markdown(f"""<div class="tier-card tank-card"><img src="{img_path}" width="70" style="border-radius:50%; margin-bottom:10px;"><p class="tier-title">{tank_top['영웅']}</p><p class="tier-stat">픽률 {tank_top['픽률(%)']}% | 승률 {tank_top['승률(%)']}%</p></div>""", unsafe_allow_html=True)
 with c2:
-    # 예시: 공식 캐서디 초상화 이미지 (cassidy_official.png)
-    st.image("https://raw.githubusercontent.com/username/OWTICS_Dashboard/main/assets/cassidy_official.png", width=80)
-    st.markdown(f"""<div class="tier-card dmg-card"><p class="tier-title">⚔️ DAMAGE: {dmg_top['영웅']}</p><p class="tier-stat">픽률 {dmg_top['픽률(%)']}% | 승률 {dmg_top['승률(%)']}%</p></div>""", unsafe_allow_html=True)
+    img_path = "assets/cassidy.png" if os.path.exists("assets/cassidy.png") else "https://placehold.co/100/2b2d37/F4556C/png?text=DMG"
+    st.markdown(f"""<div class="tier-card dmg-card"><img src="{img_path}" width="70" style="border-radius:50%; margin-bottom:10px;"><p class="tier-title">{dmg_top['영웅']}</p><p class="tier-stat">픽률 {dmg_top['픽률(%)']}% | 승률 {dmg_top['승률(%)']}%</p></div>""", unsafe_allow_html=True)
 with c3:
-    # 예시: 공식 아나 초상화 이미지 (ana_official.png)
-    st.image("https://raw.githubusercontent.com/username/OWTICS_Dashboard/main/assets/ana_official.png", width=80)
-    st.markdown(f"""<div class="tier-card sup-card"><p class="tier-title">💉 SUPPORT: {sup_top['영웅']}</p><p class="tier-stat">픽률 {sup_top['픽률(%)']}% | 승률 {sup_top['승률(%)']}%</p></div>""", unsafe_allow_html=True)
+    img_path = "assets/ana.png" if os.path.exists("assets/ana.png") else "https://placehold.co/100/2b2d37/38E09E/png?text=SUP"
+    st.markdown(f"""<div class="tier-card sup-card"><img src="{img_path}" width="70" style="border-radius:50%; margin-bottom:10px;"><p class="tier-title">{sup_top['영웅']}</p><p class="tier-stat">픽률 {sup_top['픽률(%)']}% | 승률 {sup_top['승률(%)']}%</p></div>""", unsafe_allow_html=True)
 
 st.markdown("<br>", unsafe_allow_html=True)
 
-# --- 🔥 리더보드 그래프 (글꼴 적용) ---
-colA, colB = st.columns(2)
-
-with colA:
-    st.markdown("### 🔥 OVERALL TOP 5 PICK RATE")
-    top_picks = df.sort_values('픽률(%)', ascending=False).head(5)
-    fig_pick = px.bar(top_picks, x='픽률(%)', y='영웅', orientation='h', text='픽률(%)', color='포지션', color_discrete_map={'탱커':'#4EA8DE', '딜러':'#F4556C', '힐러':'#38E09E'})
-    fig_pick.update_layout(yaxis={'categoryorder':'total ascending'}, margin=dict(l=0, r=0, t=0, b=0), paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', font=dict(color='white', family="Teko, sans-serif", size=16))
-    fig_pick.update_traces(textposition='outside')
-    st.plotly_chart(fig_pick, use_container_width=True)
-
-with colB:
-    st.markdown("### 🏆 OVERALL TOP 5 WIN RATE")
-    top_wins = df.sort_values('승률(%)', ascending=False).head(5)
-    fig_win = px.bar(top_wins, x='승률(%)', y='영웅', orientation='h', text='승률(%)', color='포지션', color_discrete_map={'탱커':'#4EA8DE', '딜러':'#F4556C', '힐러':'#38E09E'})
-    fig_win.update_layout(yaxis={'categoryorder':'total ascending'}, margin=dict(l=0, r=0, t=0, b=0), paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', font=dict(color='white', family="Teko, sans-serif", size=16))
-    fig_win.update_traces(textposition='outside')
-    st.plotly_chart(fig_win, use_container_width=True)
-
-st.divider()
-
-# --- 📋 전체 데이터 표 (동일) ---
+# 화려하게 바뀐 풀 히어로 리더보드 (Plotly Table 활용)
 st.markdown("### 📋 FULL HERO LEADERBOARD")
-st.dataframe(df[['영웅', '포지션', '세부역할', '픽률(%)', '승률(%)']], use_container_width=True, hide_index=True, column_config={"픽률(%)": st.column_config.ProgressColumn("픽률(%)", format="%f%%", min_value=0, max_value=50), "승률(%)": st.column_config.NumberColumn("승률(%)", format="%f%%")})
+fig_table = go.Figure(data=[go.Table(
+    header=dict(values=list(df.columns),
+                fill_color='#f99e1a',
+                font=dict(color='black', family="Teko, sans-serif", size=18),
+                align='center'),
+    cells=dict(values=[df['영웅'], df['포지션'], df['세부역할'], df['픽률(%)'], df['승률(%)']],
+               fill_color='#2b2d37',
+               font=dict(color='white', size=14),
+               align='center',
+               height=30))
+])
+fig_table.update_layout(margin=dict(l=0, r=0, t=0, b=0), paper_bgcolor='rgba(0,0,0,0)')
+st.plotly_chart(fig_table, use_container_width=True)
