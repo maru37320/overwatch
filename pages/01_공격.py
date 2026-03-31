@@ -8,34 +8,45 @@ st.set_page_config(page_title="DAMAGE STATS", page_icon="⚔️", layout="wide")
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Teko:wght@500;700&display=swap');
-    .stApp { background-color: #1b1c23; color: #f0edee; font-family: 'Malgun Gothic', sans-serif;}
-    h1, h2, h3 { font-family: 'Teko', sans-serif !important; font-style: italic; color: #F4556C !important; }
+    .stApp { background-color: #1b1c23; color: #f0edee; }
+    h1, h2, h3 { font-family: 'Teko', sans-serif !important; font-style: italic; color: #F4556C !important; text-shadow: 0 0 10px rgba(244,85,108,0.5); }
+    .hero-card { background: #2b2d37; padding: 15px; border-radius: 10px; text-align: center; border-bottom: 4px solid #F4556C; }
+    .hero-card img { border-radius: 50%; width: 80px; height: 80px; object-fit: cover; border: 2px solid #F4556C; }
+    .dark-table { width: 100%; border-collapse: collapse; font-family: 'Malgun Gothic', sans-serif; color: white; background-color: #1b1c23; text-align: center; margin-top: 10px; }
+    .dark-table th { background-color: #F4556C; color: #1b1c23; padding: 10px; font-family: 'Teko', sans-serif; font-size: 1.5rem; }
+    .dark-table td { padding: 8px; border-bottom: 1px solid #333; }
+    .hero-img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
 </style>
 """, unsafe_allow_html=True)
-
-# 🌅 딜러 공식 얼굴 배너 이미지 소환 (딜러 공식 초상화 배너)
-st.image("https://raw.githubusercontent.com/username/OWTICS_Dashboard/main/assets/damage_header_official.png", caption="DAMAGE HEROES METRICS (OFFICIAL PORTRAITS)", use_container_width=True)
 
 st.title("⚔️ DAMAGE HERO METRICS")
 
 if os.path.exists('owtics_s21_exact_data.csv'):
     df = pd.read_csv('owtics_s21_exact_data.csv')
 else:
+    st.error("메인 페이지를 먼저 실행해서 데이터를 로드해주세요!")
     st.stop()
 
-dmg_df = df[df['포지션'] == '딜러']
+dmg_df = df[df['포지션'] == '딜러'].sort_values('픽률(%)', ascending=False)
 
-col1, col2 = st.columns(2)
+st.subheader("🏆 TOP 3 DAMAGE")
+cols = st.columns(3)
+for i in range(3):
+    hero = dmg_df.iloc[i]
+    with cols[i]:
+        st.markdown(f"""<div class="hero-card"><img src="{hero['초상화']}"><h3 style="margin:5px 0;">{i+1}. {hero['영웅']}</h3><p style="margin:0; color:#ccc;">픽률 {hero['픽률(%)']}% | 승률 {hero['승률(%)']}%</p></div>""", unsafe_allow_html=True)
 
-with col1:
-    st.subheader("PICK RATE (%)")
-    fig_pick = px.bar(dmg_df.sort_values('픽률(%)', ascending=False), x='영웅', y='픽률(%)', text_auto='.1f', color='세부역할', color_discrete_sequence=px.colors.sequential.Reds_r)
-    fig_pick.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', font=dict(color='white', family="Teko, sans-serif", size=16))
-    st.plotly_chart(fig_pick, use_container_width=True)
+st.divider()
+st.subheader("🎯 META ANALYSIS (PICK RATE vs WIN RATE)")
+fig_scatter = px.scatter(dmg_df, x='픽률(%)', y='승률(%)', text='영웅', size='픽률(%)', color='세부역할', color_discrete_sequence=px.colors.sequential.Reds_r)
+fig_scatter.update_traces(textposition='top center', marker=dict(line=dict(width=2, color='white')))
+fig_scatter.add_hline(y=50, line_dash="dash", line_color="yellow", annotation_text="승률 50% 기준선")
+fig_scatter.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', font=dict(color='white', family="Teko, sans-serif", size=14), height=400)
+st.plotly_chart(fig_scatter, use_container_width=True)
 
-with col2:
-    st.subheader("WIN RATE (%)")
-    fig_win = px.bar(dmg_df.sort_values('승률(%)', ascending=False), x='영웅', y='승률(%)', text_auto='.1f', color='세부역할', color_discrete_sequence=px.colors.sequential.Reds_r)
-    fig_win.add_hline(y=50, line_dash="dash", line_color="yellow")
-    fig_win.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', font=dict(color='white', family="Teko, sans-serif", size=16), yaxis=dict(range=[40, 60]))
-    st.plotly_chart(fig_win, use_container_width=True)
+st.subheader("📋 DAMAGE LEADERBOARD")
+html_table = "<table class='dark-table'><tr><th>FACE</th><th>영웅</th><th>세부역할</th><th>픽률(%)</th><th>승률(%)</th></tr>"
+for _, row in dmg_df.iterrows():
+    html_table += f"<tr><td><img src='{row['초상화']}' class='hero-img'></td><td>{row['영웅']}</td><td>{row['세부역할']}</td><td>{row['픽률(%)']}</td><td>{row['승률(%)']}</td></tr>"
+html_table += "</table>"
+st.markdown(html_table, unsafe_allow_html=True)
