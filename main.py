@@ -5,20 +5,17 @@ import requests
 
 st.set_page_config(page_title="OWTICS S21 MID", page_icon="🔥", layout="wide")
 
-# --- 🕸️ 파이썬 requests로 공식 초상화 실시간 스크래핑 ---
 @st.cache_data
 def fetch_official_hero_portraits():
     url = "https://overfast-api.tekrop.fr/heroes?locale=ko-kr"
     img_dict = {}
     try:
-        # 봇 차단 우회용 헤더
         headers = {"User-Agent": "Mozilla/5.0"}
         response = requests.get(url, headers=headers, timeout=5)
         if response.status_code == 200:
             data = response.json()
             for item in data:
                 name = item['name']
-                # 네 데이터 이름과 공식 이름 싱크 맞추기
                 if name == 'D.Va': name = '디바'
                 if name == '솔저: 76': name = 'Soldier: 76'
                 img_dict[name] = item['portrait']
@@ -28,7 +25,6 @@ def fetch_official_hero_portraits():
 
 hero_images = fetch_official_hero_portraits()
 
-# --- CSS 스타일링 ---
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Teko:wght@500;700&display=swap');
@@ -41,12 +37,18 @@ st.markdown("""
     .sup-card { border-left-color: #38E09E; box-shadow: 0 0 15px rgba(56,224,158,0.3); }
     .tier-title { font-family: 'Teko', sans-serif; font-size: 2.2rem; font-style: italic; color: white; margin: 10px 0 0 0; line-height: 1.1;}
     .tier-stat { font-size: 1.2rem; font-weight: bold; color: #f99e1a; margin-top: 5px;}
+    
+    /* 🔥 커스텀 다크모드 테이블 CSS */
+    .dark-table { width: 100%; border-collapse: collapse; font-family: 'Malgun Gothic', sans-serif; color: white; background-color: #1b1c23; text-align: center; margin-top: 10px; }
+    .dark-table th { background-color: #f99e1a; color: #1b1c23; padding: 12px; font-family: 'Teko', sans-serif; font-size: 1.5rem; letter-spacing: 1px; }
+    .dark-table td { padding: 8px; border-bottom: 1px solid #333; vertical-align: middle; }
+    .dark-table tr:hover { background-color: #2b2d37; }
+    .hero-img { width: 45px; height: 45px; border-radius: 50%; border: 2px solid #555; object-fit: cover; }
 </style>
 """, unsafe_allow_html=True)
 
 st.markdown('<div class="ow-header">S21 MID META DASHBOARD</div>', unsafe_allow_html=True)
 
-# 전체 데이터 로드
 data = {
     '영웅': ['시그마', '도미나', '윈스턴', '오리사', '디바', '자리야', '라인하르트', '둠피스트', '라마트라', '로드호그', '레킹볼', '마우가', '정커퀸', '해저드', '캐서디', '엠레', 'Soldier: 76', '소전', '겐지', '애쉬', '안란', '리퍼', '바스티온', '트레이서', '한조', '정크랫', '메이', '파라', '에코', '프레야', '위도우메이커', '벤데타', '시메트라', '벤처', '솜브라', '토르비욘', '아나', '바티스트', '브리기테', '일리아리', '제트팩 캣', '주노', '키리코', '라이프위버', '루시우', '메르시', '미즈키', '모이라', '우양', '젠야타'],
     '포지션': ['탱커']*14 + ['딜러']*22 + ['힐러']*14,
@@ -56,10 +58,7 @@ data = {
 }
 df = pd.DataFrame(data)
 
-# 📸 데이터프레임에 스크래핑한 공식 이미지 URL 매핑 (없으면 임시 아이콘)
 df['초상화'] = df['영웅'].apply(lambda x: hero_images.get(x, f"https://placehold.co/150x150/2b2d37/f99e1a/png?text={x}"))
-
-# 컬럼 순서 재배치
 df = df[['초상화', '영웅', '포지션', '세부역할', '픽률(%)', '승률(%)']]
 df.to_csv('owtics_s21_exact_data.csv', index=False)
 
@@ -69,7 +68,6 @@ tank_top = df[df['포지션']=='탱커'].sort_values('픽률(%)', ascending=Fals
 dmg_top = df[df['포지션']=='딜러'].sort_values('픽률(%)', ascending=False).iloc[0]
 sup_top = df[df['포지션']=='힐러'].sort_values('픽률(%)', ascending=False).iloc[0]
 
-# --- 1티어 공식 초상화 자동 출력 ---
 with c1:
     st.markdown(f"""<div class="tier-card tank-card"><img src="{tank_top['초상화']}" width="100" style="border-radius:50%; border: 3px solid #4EA8DE;"><p class="tier-title">{tank_top['영웅']}</p><p class="tier-stat">픽률 {tank_top['픽률(%)']}% | 승률 {tank_top['승률(%)']}%</p></div>""", unsafe_allow_html=True)
 with c2:
@@ -79,22 +77,10 @@ with c3:
 
 st.markdown("<br>", unsafe_allow_html=True)
 
-# --- 🌟 대망의 이미지 연동 풀 히어로 리더보드 표 ---
+# --- 🔥 하얀 배경 해결: 다크모드 커스텀 HTML 테이블 ---
 st.markdown("### 📋 FULL HERO LEADERBOARD")
-st.dataframe(
-    df,
-    column_config={
-        "초상화": st.column_config.ImageColumn(
-            "FACE", help="공식 영웅 초상화"
-        ),
-        "픽률(%)": st.column_config.ProgressColumn(
-            "픽률(%)", format="%f%%", min_value=0, max_value=50
-        ),
-        "승률(%)": st.column_config.NumberColumn(
-            "승률(%)", format="%f%%"
-        )
-    },
-    hide_index=True,
-    use_container_width=True,
-    height=600
-)
+html_table = "<table class='dark-table'><tr><th>FACE</th><th>영웅</th><th>포지션</th><th>세부역할</th><th>픽률(%)</th><th>승률(%)</th></tr>"
+for index, row in df.iterrows():
+    html_table += f"<tr><td><img src='{row['초상화']}' class='hero-img'></td><td>{row['영웅']}</td><td>{row['포지션']}</td><td>{row['세부역할']}</td><td>{row['픽률(%)']:.1f}</td><td>{row['승률(%)']:.1f}</td></tr>"
+html_table += "</table>"
+st.markdown(html_table, unsafe_allow_html=True)
