@@ -8,22 +8,41 @@ st.set_page_config(page_title="OWTICS S21 MID", page_icon="🔥", layout="wide")
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Teko:wght@500;700&display=swap');
+    
     .stApp { background-color: #1b1c23; color: #f0edee; font-family: 'Malgun Gothic', sans-serif;}
-    .ow-header { font-family: 'Teko', sans-serif; font-size: 3.5rem; font-weight: 700; font-style: italic; color: #f99e1a; text-transform: uppercase; letter-spacing: 1px; }
-    .tier-card { padding: 20px; border-radius: 8px; background-color: #2b2d37; border-left: 6px solid; }
+    
+    .ow-header {
+        font-family: 'Teko', sans-serif;
+        font-size: 3.5rem;
+        font-weight: 700;
+        font-style: italic;
+        color: #f99e1a;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+    
+    /* 포지션별 1티어 강조 카드 */
+    .tier-card {
+        padding: 20px;
+        border-radius: 8px;
+        background-color: #2b2d37;
+        border-left: 6px solid;
+    }
     .tank-card { border-left-color: #4EA8DE; }
     .dmg-card { border-left-color: #F4556C; }
     .sup-card { border-left-color: #38E09E; }
+    
     .tier-title { font-family: 'Teko', sans-serif; font-size: 1.8rem; font-style: italic; color: white; margin: 0; line-height: 1.2;}
     .tier-stat { font-size: 1.1rem; font-weight: bold; color: #f99e1a; margin-top: 5px;}
 </style>
 """, unsafe_allow_html=True)
 
-# 🌅 진짜로 작동하는 고화질 메인 배너 이미지 (오버워치 느낌의 게이밍 데스크)
-st.image("https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=2070&auto=format&fit=crop", use_container_width=True)
+# 🌅 메인 배너 이미지 소환 (전체 영웅 공식 초상화 배너)
+st.image("https://raw.githubusercontent.com/username/OWTICS_Dashboard/main/assets/main_banner_official.png", caption="OWTICS.GG SEASON 21 MID DASHBOARD (OFFICIAL PORTRAITS)", use_container_width=True)
 
 st.markdown('<div class="ow-header">S21 MID META DASHBOARD</div>', unsafe_allow_html=True)
 
+# 데이터 로드 (50명 전체 데이터 - 동일)
 data = {
     '영웅': ['시그마', '도미나', '윈스턴', '오리사', '디바', '자리야', '라인하르트', '둠피스트', '라마트라', '로드호그', '레킹볼', '마우가', '정커퀸', '해저드', '캐서디', '엠레', 'Soldier: 76', '소전', '겐지', '애쉬', '안란', '리퍼', '바스티온', '트레이서', '한조', '정크랫', '메이', '파라', '에코', '프레야', '위도우메이커', '벤데타', '시메트라', '벤처', '솜브라', '토르비욘', '아나', '바티스트', '브리기테', '일리아리', '제트팩 캣', '주노', '키리코', '라이프위버', '루시우', '메르시', '미즈키', '모이라', '우양', '젠야타'],
     '포지션': ['탱커']*14 + ['딜러']*22 + ['힐러']*14,
@@ -41,15 +60,23 @@ tank_top = df[df['포지션']=='탱커'].sort_values('픽률(%)', ascending=Fals
 dmg_top = df[df['포지션']=='딜러'].sort_values('픽률(%)', ascending=False).iloc[0]
 sup_top = df[df['포지션']=='힐러'].sort_values('픽률(%)', ascending=False).iloc[0]
 
+# --- 👑 1티어 공식 얼굴 카드 소환 ---
 with c1:
+    # 예시: 공식 시그마 초상화 이미지 (sigma_official.png)
+    st.image("https://raw.githubusercontent.com/username/OWTICS_Dashboard/main/assets/sigma_official.png", width=80) 
     st.markdown(f"""<div class="tier-card tank-card"><p class="tier-title">🛡️ TANK: {tank_top['영웅']}</p><p class="tier-stat">픽률 {tank_top['픽률(%)']}% | 승률 {tank_top['승률(%)']}%</p></div>""", unsafe_allow_html=True)
 with c2:
+    # 예시: 공식 캐서디 초상화 이미지 (cassidy_official.png)
+    st.image("https://raw.githubusercontent.com/username/OWTICS_Dashboard/main/assets/cassidy_official.png", width=80)
     st.markdown(f"""<div class="tier-card dmg-card"><p class="tier-title">⚔️ DAMAGE: {dmg_top['영웅']}</p><p class="tier-stat">픽률 {dmg_top['픽률(%)']}% | 승률 {dmg_top['승률(%)']}%</p></div>""", unsafe_allow_html=True)
 with c3:
+    # 예시: 공식 아나 초상화 이미지 (ana_official.png)
+    st.image("https://raw.githubusercontent.com/username/OWTICS_Dashboard/main/assets/ana_official.png", width=80)
     st.markdown(f"""<div class="tier-card sup-card"><p class="tier-title">💉 SUPPORT: {sup_top['영웅']}</p><p class="tier-stat">픽률 {sup_top['픽률(%)']}% | 승률 {sup_top['승률(%)']}%</p></div>""", unsafe_allow_html=True)
 
 st.markdown("<br>", unsafe_allow_html=True)
 
+# --- 🔥 리더보드 그래프 (글꼴 적용) ---
 colA, colB = st.columns(2)
 
 with colA:
@@ -70,5 +97,6 @@ with colB:
 
 st.divider()
 
+# --- 📋 전체 데이터 표 (동일) ---
 st.markdown("### 📋 FULL HERO LEADERBOARD")
 st.dataframe(df[['영웅', '포지션', '세부역할', '픽률(%)', '승률(%)']], use_container_width=True, hide_index=True, column_config={"픽률(%)": st.column_config.ProgressColumn("픽률(%)", format="%f%%", min_value=0, max_value=50), "승률(%)": st.column_config.NumberColumn("승률(%)", format="%f%%")})
