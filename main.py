@@ -27,23 +27,27 @@ hero_images = fetch_official_hero_portraits()
 
 st.markdown("""
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Teko:wght@400;500;700&display=swap');
+    /* 🔥 영문/숫자용 Teko 폰트 + 한글용 Noto Sans KR 폰트 동시 로드 */
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@500;700;900&family=Teko:wght@400;500;700&display=swap');
+    
     .stApp { background-color: #1b1c23; color: #f0edee; }
-    .ow-header { font-family: 'Teko', sans-serif; font-size: 4rem; font-weight: 700; font-style: italic; color: #f99e1a; text-shadow: 2px 2px 10px rgba(249,158,26,0.5); text-transform: uppercase; }
+    .ow-header { font-family: 'Teko', 'Noto Sans KR', sans-serif; font-size: 4rem; font-weight: 700; font-style: italic; color: #f99e1a; text-shadow: 2px 2px 10px rgba(249,158,26,0.5); text-transform: uppercase; }
     .tier-card { padding: 20px; border-radius: 12px; background: linear-gradient(145deg, #2b2d37, #1e1f26); box-shadow: 0 4px 15px rgba(0,0,0,0.5); border-left: 6px solid; transition: transform 0.2s; text-align: center;}
     .tier-card:hover { transform: scale(1.02); }
     .tank-card { border-left-color: #4EA8DE; box-shadow: 0 0 15px rgba(78,168,222,0.3); }
     .dmg-card { border-left-color: #F4556C; box-shadow: 0 0 15px rgba(244,85,108,0.3); }
     .sup-card { border-left-color: #38E09E; box-shadow: 0 0 15px rgba(56,224,158,0.3); }
-    .tier-title { font-family: 'Teko', sans-serif; font-size: 2.2rem; font-style: italic; color: white; margin: 10px 0 0 0; line-height: 1.1;}
-    .tier-stat { font-family: 'Teko', sans-serif; font-size: 1.4rem; font-weight: 500; color: #f99e1a; margin-top: 5px; letter-spacing: 1px;}
     
-    /* 🔥 폰트 통일된 커스텀 다크모드 테이블 CSS */
-    .dark-table { width: 100%; border-collapse: collapse; font-family: 'Teko', sans-serif; font-size: 1.4rem; letter-spacing: 1px; color: white; background-color: #1b1c23; text-align: center; margin-top: 10px; }
-    .dark-table th { background-color: #f99e1a; color: #1b1c23; padding: 12px; font-weight: 700; font-size: 1.6rem; letter-spacing: 1px; }
-    .dark-table td { padding: 8px; border-bottom: 1px solid #333; vertical-align: middle; font-weight: 400; }
+    .tier-title { font-family: 'Teko', 'Noto Sans KR', sans-serif; font-size: 2.2rem; font-weight: 900; font-style: italic; color: white; margin: 10px 0 0 0; line-height: 1.1;}
+    .tier-stat { font-family: 'Teko', 'Noto Sans KR', sans-serif; font-size: 1.4rem; font-weight: 500; color: #f99e1a; margin-top: 5px; letter-spacing: 0.5px;}
+    
+    .dark-table { width: 100%; border-collapse: collapse; font-family: 'Teko', 'Noto Sans KR', sans-serif; font-size: 1.2rem; letter-spacing: 0.5px; color: white; background-color: #1b1c23; text-align: center; margin-top: 10px; }
+    .dark-table th { background-color: #f99e1a; color: #1b1c23; padding: 12px; font-weight: 900; font-size: 1.5rem; letter-spacing: 1px; font-style: italic; }
+    .dark-table td { padding: 10px; border-bottom: 1px solid #333; vertical-align: middle; font-weight: 500; }
     .dark-table tr:hover { background-color: #2b2d37; }
     .hero-img { width: 45px; height: 45px; border-radius: 50%; border: 2px solid #555; object-fit: cover; }
+    
+    h3 { font-family: 'Teko', 'Noto Sans KR', sans-serif !important; font-weight: 900 !important; font-style: italic; }
 </style>
 """, unsafe_allow_html=True)
 
