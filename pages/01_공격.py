@@ -7,14 +7,17 @@ st.set_page_config(page_title="DAMAGE STATS", page_icon="⚔️", layout="wide")
 
 st.markdown("""
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Teko:wght@500;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@500;700;900&family=Teko:wght@400;500;700&display=swap');
+    
     .stApp { background-color: #1b1c23; color: #f0edee; }
-    h1, h2, h3 { font-family: 'Teko', sans-serif !important; font-style: italic; color: #F4556C !important; text-shadow: 0 0 10px rgba(244,85,108,0.5); }
+    h1, h2, h3 { font-family: 'Teko', 'Noto Sans KR', sans-serif !important; font-style: italic; font-weight: 900 !important; color: #F4556C !important; text-shadow: 0 0 10px rgba(244,85,108,0.5); }
     .hero-card { background: #2b2d37; padding: 15px; border-radius: 10px; text-align: center; border-bottom: 4px solid #F4556C; }
     .hero-card img { border-radius: 50%; width: 80px; height: 80px; object-fit: cover; border: 2px solid #F4556C; }
-    .dark-table { width: 100%; border-collapse: collapse; font-family: 'Malgun Gothic', sans-serif; color: white; background-color: #1b1c23; text-align: center; margin-top: 10px; }
-    .dark-table th { background-color: #F4556C; color: #1b1c23; padding: 10px; font-family: 'Teko', sans-serif; font-size: 1.5rem; }
-    .dark-table td { padding: 8px; border-bottom: 1px solid #333; }
+    .hero-card p { font-family: 'Teko', 'Noto Sans KR', sans-serif; font-size: 1.2rem; letter-spacing: 0.5px;}
+    
+    .dark-table { width: 100%; border-collapse: collapse; font-family: 'Teko', 'Noto Sans KR', sans-serif; font-size: 1.2rem; letter-spacing: 0.5px; color: white; background-color: #1b1c23; text-align: center; margin-top: 10px; }
+    .dark-table th { background-color: #F4556C; color: #1b1c23; padding: 12px; font-weight: 900; font-size: 1.5rem; font-style: italic; }
+    .dark-table td { padding: 10px; border-bottom: 1px solid #333; font-weight: 500; }
     .hero-img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
 </style>
 """, unsafe_allow_html=True)
@@ -38,27 +41,23 @@ for i in range(3):
 
 st.divider()
 
-# --- 🎯 얼굴 박힌 스캐터 플롯 ---
 st.subheader("🎯 META ANALYSIS (PICK RATE vs WIN RATE)")
 fig_scatter = px.scatter(dmg_df, x='픽률(%)', y='승률(%)', text='영웅', hover_data=['세부역할'])
-fig_scatter.update_traces(marker=dict(opacity=0), textposition='bottom center', textfont=dict(color='white'))
+fig_scatter.update_traces(marker=dict(opacity=0), textposition='bottom center', textfont=dict(color='white', family="Noto Sans KR, sans-serif", size=13))
 
 for _, row in dmg_df.iterrows():
     fig_scatter.add_layout_image(
         dict(
             source=row['초상화'], x=row['픽률(%)'], y=row['승률(%)'],
-            xref="x", yref="y",
-            sizex=2.0, sizey=1.5, # 딜러 축 비율 조정
-            xanchor="center", yanchor="middle",
-            sizing="contain", layer="above"
+            xref="x", yref="y", sizex=2.0, sizey=1.5, 
+            xanchor="center", yanchor="middle", sizing="contain", layer="above"
         )
     )
 
 fig_scatter.add_hline(y=50, line_dash="dash", line_color="yellow", annotation_text="승률 50% 기준선", annotation_font_color="white")
 fig_scatter.update_xaxes(range=[dmg_df['픽률(%)'].min() - 2, dmg_df['픽률(%)'].max() + 2])
 fig_scatter.update_yaxes(range=[dmg_df['승률(%)'].min() - 2, dmg_df['승률(%)'].max() + 3])
-fig_scatter.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', font=dict(family="Teko, sans-serif", size=14), height=600)
-
+fig_scatter.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', font=dict(family="Teko, Noto Sans KR, sans-serif", size=14), height=600)
 st.plotly_chart(fig_scatter, use_container_width=True)
 
 st.subheader("📋 DAMAGE LEADERBOARD")
